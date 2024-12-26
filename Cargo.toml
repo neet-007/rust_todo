@@ -1,0 +1,11 @@
+[package]
+name = "rust_todo"
+version = "0.1.0"
+edition = "2021"
+authors = ["moayed <moayedeffect@gmail.com>"]
+description = "A simple todo application"
+about = "Manage your todo list from the command line"
+
+[dependencies]
+clap = { version = "4.5.23", features = ["derive"] }
+home = "0.5.11"
