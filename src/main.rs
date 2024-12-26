@@ -1,5 +1,6 @@
+use std::{io, path::PathBuf};
+
 use clap::{CommandFactory, Parser};
-use home::home_dir;
 use rust_todo::TodoManager;
 
 #[derive(Parser)]
@@ -27,13 +28,9 @@ struct Cli {
     repl: bool,
 }
 
-fn main() {
+fn main() -> io::Result<()> {
     let args = Cli::parse();
-    let home = match home_dir() {
-        Some(path) => path,
-        None => panic!("could not find home dir"),
-    };
-    let mut todo_manager = TodoManager::new(&home);
+    let mut todo_manager = TodoManager::with_path(&PathBuf::from("hello"))?;
 
     match (
         &args.add,
@@ -79,4 +76,5 @@ fn main() {
             }
         }
     }
+    Ok(())
 }
