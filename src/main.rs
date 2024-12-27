@@ -7,7 +7,7 @@ use rust_todo::TodoManager;
 #[command(author, version, about, long_about = None)]
 struct Cli {
     #[arg(short, long)]
-    change_dir: Option<std::path::PathBuf>,
+    change_dir: Option<PathBuf>,
 
     #[arg(short, long)]
     add: Option<String>,
@@ -30,7 +30,7 @@ struct Cli {
 
 fn main() -> io::Result<()> {
     let args = Cli::parse();
-    let mut todo_manager = TodoManager::with_path(&PathBuf::from("hello"))?;
+    let mut todo_manager = TodoManager::new()?;
 
     match (
         &args.add,
@@ -38,16 +38,28 @@ fn main() -> io::Result<()> {
         &args.mark_done,
         &args.mark_important,
     ) {
-        (Some(item), None, None, None) => println!("Adding: {}", item),
-        (None, Some(item), None, None) => println!("Removing: {}", item),
-        (None, None, Some(item), None) => println!("Marking as done: {}", item),
-        (None, None, None, Some(item)) => println!("Marking as important: {}", item),
+        (Some(item), None, None, None) => {
+            println!("Adding: {}", item);
+            todo_manager.add_todo(item.clone())?
+        }
+        (None, Some(item), None, None) => {
+            println!("Removing: {}", item);
+            todo_manager.remove_todo(item.clone())?
+        }
+        (None, None, Some(item), None) => {
+            println!("Marking as done: {}", item);
+            todo_manager.mark_done_todo(item.clone())?
+        }
+        (None, None, None, Some(item)) => {
+            println!("Marking as important: {}", item);
+            todo_manager.mark_important_todo(item.clone())?
+        }
         (None, None, None, None) if args.list => println!("Listing all items..."),
         (None, None, None, None) => {
             Cli::command().print_help().unwrap();
         }
         _ => println!("Please provide only one action at a time"),
-    }
+    };
     if args.list {
         todo_manager.list_todos();
     }
