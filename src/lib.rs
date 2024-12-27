@@ -211,6 +211,35 @@ impl TodoManager {
 
         Ok(())
     }
-    pub fn list_todos(&mut self) {}
-    pub fn change_dir(&mut self) {}
+
+    pub fn list_todos(&mut self) -> io::Result<()> {
+        let file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create(true)
+            .open(self.path.clone())?;
+
+        let todo_file: TodoFile = match from_reader(&file) {
+            Ok(parsed) => parsed,
+            Err(_) => {
+                println!("no todos found");
+                return Ok(());
+            }
+        };
+
+        for todo in &todo_file.todos_container {
+            println!(
+                "name: {:?} is_done: {:?} is_important: {:?}",
+                todo.name, todo.done, todo.important
+            );
+        }
+        Ok(())
+    }
+
+    pub fn change_dir(&mut self, new_dir: PathBuf) -> io::Result<()> {
+        self.init(Some(&new_dir))?;
+        self.path = new_dir.clone();
+
+        Ok(())
+    }
 }

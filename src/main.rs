@@ -61,7 +61,8 @@ fn main() -> io::Result<()> {
         _ => println!("Please provide only one action at a time"),
     };
     if args.list {
-        todo_manager.list_todos();
+        println!("your todos:");
+        todo_manager.list_todos()?;
     }
 
     if args.repl {
@@ -84,7 +85,7 @@ fn main() -> io::Result<()> {
                 _ => println!("Please provide only one action at a time"),
             }
             if args.list {
-                todo_manager.list_todos();
+                todo_manager.list_todos()?;
             }
         }
     }
